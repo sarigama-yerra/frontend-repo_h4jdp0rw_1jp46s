@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import Hero from './components/Hero'
 import Specials from './components/Specials'
 import Announcements from './components/Announcements'
@@ -14,6 +15,12 @@ function Section({ title, children }) {
       {children}
     </section>
   )
+}
+
+const pageVariants = {
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -16 },
 }
 
 export default function App() {
@@ -69,37 +76,39 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-stone-50">
       <div className="max-w-md mx-auto px-4 pb-24">
-        {tab==='home' && (
-          <>
-            <div className="pt-4">
-              <Hero />
-            </div>
-            <Section>
-              <Specials specials={specials} />
-            </Section>
-            <Section>
-              <Announcements items={announcements} />
-            </Section>
-          </>
-        )}
+        <AnimatePresence mode="wait">
+          {tab==='home' && (
+            <motion.div key="home" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.28, ease: 'easeOut' }}>
+              <div className="pt-4">
+                <Hero />
+              </div>
+              <Section>
+                <Specials specials={specials} />
+              </Section>
+              <Section>
+                <Announcements items={announcements} />
+              </Section>
+            </motion.div>
+          )}
 
-        {tab==='menu' && (
-          <div className="pt-4">
-            <Menu onAdd={addToCart} auth={auth} />
-          </div>
-        )}
+          {tab==='menu' && (
+            <motion.div key="menu" className="pt-4" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.28, ease: 'easeOut' }}>
+              <Menu onAdd={addToCart} auth={auth} />
+            </motion.div>
+          )}
 
-        {tab==='cart' && (
-          <div className="pt-4">
-            <Cart items={cart} onChangeQty={changeQty} onCheckout={checkout} mode={mode} setMode={setMode} />
-          </div>
-        )}
+          {tab==='cart' && (
+            <motion.div key="cart" className="pt-4" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.28, ease: 'easeOut' }}>
+              <Cart items={cart} onChangeQty={changeQty} onCheckout={checkout} mode={mode} setMode={setMode} />
+            </motion.div>
+          )}
 
-        {tab==='account' && (
-          <div className="pt-4">
-            <Account auth={auth} setAuth={setAuth} />
-          </div>
-        )}
+          {tab==='account' && (
+            <motion.div key="account" className="pt-4" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.28, ease: 'easeOut' }}>
+              <Account auth={auth} setAuth={setAuth} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <TabBar current={tab} onChange={setTab} />

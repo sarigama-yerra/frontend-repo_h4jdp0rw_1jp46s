@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Heart, Plus, Search } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 const categories = [
   { key: 'breakfast', label: 'Breakfast' },
@@ -41,10 +42,14 @@ export default function Menu({ onAdd, auth }) {
     <div className="pb-24">
       <div className="flex gap-2 overflow-x-auto no-scrollbar mb-4">
         {categories.map(c => (
-          <button key={c.key} onClick={() => setActive(c.key)}
-            className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${active===c.key ? 'bg-amber-200 text-amber-900' : 'bg-stone-100 text-stone-700'}`}>
+          <motion.button
+            key={c.key}
+            onClick={() => setActive(c.key)}
+            whileTap={{ scale: 0.96 }}
+            className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${active===c.key ? 'bg-amber-200 text-amber-900' : 'bg-stone-100 text-stone-700'}`}
+          >
             {c.label}
-          </button>
+          </motion.button>
         ))}
       </div>
 
@@ -54,27 +59,35 @@ export default function Menu({ onAdd, auth }) {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {filtered.map(item => (
-          <div key={item.id} className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
-            {item.image_url && <img src={item.image_url} alt={item.name} className="h-24 w-full object-cover" />}
+        {filtered.map((item, idx) => (
+          <motion.div
+            key={item.id}
+            className="bg-white rounded-2xl border border-stone-200 overflow-hidden"
+            initial={{ y: 8, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true, margin: '-10% 0px -10% 0px' }}
+            transition={{ duration: 0.25, delay: (idx % 6) * 0.03 }}
+            whileHover={{ y: -3, boxShadow: '0 10px 24px rgba(0,0,0,0.06)' }}
+          >
+            {item.image_url && <motion.img src={item.image_url} alt={item.name} className="h-24 w-full object-cover" initial={{ scale: 1.03 }} whileHover={{ scale: 1.06 }} transition={{ duration: 0.4 }} />}
             <div className="p-3">
               <div className="flex justify-between items-start gap-2">
                 <div>
                   <p className="font-semibold text-stone-800">{item.name}</p>
                   <p className="text-xs text-stone-500 line-clamp-2">{item.description}</p>
                 </div>
-                <button onClick={() => toggleFav(item.id)} className="text-amber-700">
+                <motion.button onClick={() => toggleFav(item.id)} className="text-amber-700" whileTap={{ scale: 0.9 }}>
                   <Heart className="w-5 h-5" />
-                </button>
+                </motion.button>
               </div>
               <div className="flex items-center justify-between mt-2">
-                <span className="text-amber-700 font-semibold">${'{'}item.price.toFixed(2){'}'}</span>
-                <button onClick={()=> onAdd(item)} className="px-2 py-1 rounded-lg bg-amber-600 text-white text-sm flex items-center gap-1">
+                <span className="text-amber-700 font-semibold">${item.price.toFixed(2)}</span>
+                <motion.button onClick={()=> onAdd(item)} className="px-2 py-1 rounded-lg bg-amber-600 text-white text-sm flex items-center gap-1" whileTap={{ scale: 0.95 }}>
                   <Plus className="w-4 h-4" /> Add
-                </button>
+                </motion.button>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
